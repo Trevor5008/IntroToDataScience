@@ -1,0 +1,7 @@
+OrderID,Customer,Category,Amount
+1001,Alice,Electronics,120.00
+1002,Bob,Tools,25.50
+1003,Charlie,Home,45.00
+1004,Alice,Electronics,80.00
+1005,Bob,Tools,15.75
+1006,Diana,Home,32.00

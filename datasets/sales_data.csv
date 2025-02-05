@@ -1,0 +1,7 @@
+Date,Region,Sales
+2025-01-01,North,1500
+2025-01-02,South,1200
+2025-01-03,East,NaN
+2025-01-04,West,1100
+2025-01-05,North,NaN
+2025-01-06,South,1300
