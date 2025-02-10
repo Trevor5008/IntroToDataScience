@@ -19,7 +19,11 @@ print("Variance Temperature: \n", df["Temperature (c)"].var())
 print("Standard Deviation Temperature: \n", df["Temperature (c)"].std())
 
 # Selecting numerical columns for analysis
-numerical_cols = ["Salinity (ppt)", "Temperature (c)", "pH", "ODO mg/L"]
+numerical_cols = ["Total Water Column (m)",
+                  "Salinity (ppt)",
+                  "Temperature (c)",
+                  "pH",
+                  "ODO mg/L"]
 
 """
 # Plot box plots
@@ -38,9 +42,9 @@ def detect_outliers(df, column):
     outliers = df[(df[column] < lower_bound) | (df[column] > upper_bound)]
     return outliers, lower_bound, upper_bound
 
-# Check for outliers in Temperature, Salinity, and ODO
+# Check for outliers in Total Water Column, Temperature, Salinity, pH, and ODO
 outlier_dict = {}
-for col in ["Temperature (c)", "Salinity (ppt)", "ODO mg/L"]:
+for col in numerical_cols:
     outliers, lower, upper = detect_outliers(df, col)
     outlier_dict[col] = {
         "Lower Bound": lower,
@@ -55,7 +59,7 @@ print(outlier_df)
 
 # Remove Outliers
 df_no_outliers = df.copy()
-for col in ["Temperature (c)", "Salinity (ppt)", "ODO mg/L"]:
+for col in numerical_cols:
     Q1 = df[col].quantile(0.25)
     Q3 = df[col].quantile(0.75)
     IQR = Q3 - Q1
@@ -64,7 +68,7 @@ for col in ["Temperature (c)", "Salinity (ppt)", "ODO mg/L"]:
     df_no_outliers = df_no_outliers[(df_no_outliers[col] >= lower_bound) & (df_no_outliers[col] <= upper_bound)]
 
 print("Data After Removing Outliers: \n", df_no_outliers)
-# df_no_outliers.to_csv("datasets/bb2_no_outliers.csv")
+#df_no_outliers.to_csv("datasets/bb2_no_outliers.csv")
 
 """
 for column in numerical_cols:
@@ -78,6 +82,13 @@ for col in numerical_cols:
     fig = px.histogram(df_no_outliers, x=col, nbins=30, title=f"Histogram of {col}", labels={col: col})
     fig.show()
 """
+
+# Skewness
+skewness_values = {}
+for col in numerical_cols:
+    gp = 3 * (df_no_outliers[col].mean() - df_no_outliers[col].median()) / df_no_outliers[col].std()
+    skewness_values[col]=gp
+    print(f"Pearson median skew ({col}):", gp)
 
 """
 Using seaborn to visualize histograms for the key variables, 
@@ -94,9 +105,10 @@ Observations:
 - pH has mild right skewness, but its mean and median are relatively close
 
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 # Set up the layout for histograms with skewness annotations
-fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+fig, axes = plt.subplots(3, 2, figsize=(12, 10))
 
 for ax, col in zip(axes.flatten(), numerical_cols):
     sns.histplot(df_no_outliers[col].dropna(), bins=30, kde=True, ax=ax)
@@ -107,14 +119,7 @@ for ax, col in zip(axes.flatten(), numerical_cols):
 
 plt.tight_layout()
 plt.show()
-
 """
-
-
-# Skewness
-for col in numerical_cols:
-    gp = 3 * (df_no_outliers[col].mean() - df_no_outliers[col].median()) / df_no_outliers[col].std()
-    print(f"Pearson median skew ({col}):", gp)
 
 ### 3.4 - Estimation
 # Calculate sample mean and variance for Salinity, Temperature, and ODO
@@ -147,6 +152,7 @@ print(df_no_outliers[['Salinity (ppt)', 'Salinity_z', 'Temperature (c)', 'Temper
 # Covariance between Temperature and Salinity
 cov_matrix = df_no_outliers[['Temperature (c)', 'Salinity (ppt)']].cov()
 cov_temp_sal = cov_matrix.loc['Temperature (c)', 'Salinity (ppt)']
+print(cov_matrix)
 
 # Pearson and Spearman correlations between Temperature and Salinity
 pearson_temp_sal  = df_no_outliers['Temperature (c)'].corr(df['Salinity (ppt)'], method='pearson')
@@ -156,19 +162,18 @@ print(f"Covariance(Temperature, Salinity) = {cov_temp_sal:.2f}")
 print(f"Pearson r(Temperature, Salinity) = {pearson_temp_sal:.2f}")
 print(f"Spearman ρ(Temperature, Salinity) = {spearman_temp_sal:.2f}")
 
-"""
+
 fig = px.imshow(df_no_outliers[numerical_cols].corr(), text_auto=True, aspect="auto")
 fig.show()
 
 # Pearson correlation (default)
-pearson_corr = df.corr()
+pearson_corr = df_no_outliers[numerical_cols].corr()
 print("Pearson Correlation:\n", pearson_corr)
 
 # Spearman correlation
-spearman_corr = df.corr(method='spearman')
+spearman_corr = df_no_outliers[numerical_cols].corr(method='spearman')
 print("\nSpearman Correlation:\n", spearman_corr)
 
 # Kendall correlation
-kendall_corr = df.corr(method='kendall')
+kendall_corr = df_no_outliers[numerical_cols].corr(method='kendall')
 print("\nKendall Correlation:\n", kendall_corr)
-"""
