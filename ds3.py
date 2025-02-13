@@ -4,6 +4,8 @@ import plotly.express as px
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import scipy
+
 
 st.set_page_config(layout="wide",
                    page_title="Dashboard")
@@ -101,3 +103,28 @@ for col in numerical_cols:
 
 skew_df = pd.DataFrame({"Skewness":skewness_values})
 st.dataframe(skew_df)
+
+### 3.4.2 0 Covariance
+
+# Covariance between Temperature and Salinity
+cov_matrix = df_no_outliers[['Temperature (c)', 'Salinity (ppt)']].cov()
+cov_temp_sal = cov_matrix.loc['Temperature (c)', 'Salinity (ppt)']
+print(cov_matrix)
+
+# Pearson and Spearman correlations between Temperature and Salinity
+pearson_temp_sal  = df_no_outliers['Temperature (c)'].corr(df['Salinity (ppt)'], method='pearson')
+spearman_temp_sal = df_no_outliers['Temperature (c)'].corr(df['Salinity (ppt)'], method='spearman')
+
+print(f"Covariance(Temperature, Salinity) = {cov_temp_sal:.2f}")
+print(f"Pearson r(Temperature, Salinity) = {pearson_temp_sal:.2f}")
+print(f"Spearman ρ(Temperature, Salinity) = {spearman_temp_sal:.2f}")
+
+# Don't forget to install and import scipy package
+corr_pearson = df_no_outliers[numerical_cols].corr(method="pearson")
+corr_fig = px.imshow(
+    corr_pearson,
+    text_auto=True,
+    title="Correlation Heatmap (Pearson)",
+    color_continuous_scale="viridis"
+)
+st.plotly_chart(corr_fig)
