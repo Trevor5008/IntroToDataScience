@@ -25,12 +25,12 @@ numerical_cols = ["Total Water Column (m)",
                   "pH",
                   "ODO mg/L"]
 
-"""
+
 # Plot box plots
 for col in numerical_cols:
     fig = px.box(df, y=col, title=f"Box Plot of {col}", labels={col: col})
     fig.show()
-"""
+
 
 # Function to detect outliers using the 1.5*IQR rule
 def detect_outliers(df, column):
@@ -70,18 +70,17 @@ for col in numerical_cols:
 print("Data After Removing Outliers: \n", df_no_outliers)
 #df_no_outliers.to_csv("datasets/bb2_no_outliers.csv")
 
-"""
+
 for column in numerical_cols:
     fig = px.box(df_no_outliers, y=column, title=f"Box Plot of {column}", labels={column: column})
     fig.show()
-"""
 
-"""
+
 # Plot histograms
 for col in numerical_cols:
     fig = px.histogram(df_no_outliers, x=col, nbins=30, title=f"Histogram of {col}", labels={col: col})
     fig.show()
-"""
+
 
 # Skewness
 skewness_values = {}
