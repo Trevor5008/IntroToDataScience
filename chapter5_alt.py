@@ -70,3 +70,19 @@ if st.button("Train Model"):
                       xaxis_title='Predicted Label',
                       yaxis_title='True Label')
     st.plotly_chart(fig)
+
+    # Scatter plot visualization to show clusters
+    scatter_df = pd.DataFrame(X_test, columns=feature_names)
+    scatter_df['Predicted'] = [target_names[label] for label in y_pred]
+    scatter_df['Actual'] = [target_names[label] for label in y_test]
+
+    fig_scatter = px.scatter(
+        scatter_df,
+        x=feature_names[0],
+        y=feature_names[2],
+        color='Actual',
+        symbol='Predicted',
+        title='Scatter Plot of Test Data Predictions',
+        labels={feature_names[0]: feature_names[0], feature_names[2]: feature_names[2]},
+    )
+    st.plotly_chart(fig_scatter, use_container_width=True)
