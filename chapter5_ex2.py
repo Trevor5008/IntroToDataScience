@@ -1,7 +1,9 @@
+from scipy.signal import square
 from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
+
 
 # 1. Load the diabetes dataset
 diabetes = load_diabetes()
@@ -27,6 +29,17 @@ y_pred = model.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 print("Mean Squared Error on test set:", mse)
 
+results=[]
+mse = mean_squared_error(y_test, y_pred) #Mean Squared Error (MSE)
+rmse = mean_squared_error(y_test, y_pred)**0.5 #Root Mean Squared Error (RMSE)
+nrmse = ((rmse) / (max(y_test) - min(y_test))) * 100 # Normalized Root Mean Squared Error (NRMSE)
+mae = mean_absolute_error(y_test, y_pred) #
+r2 = r2_score(y_test, y_pred)
+
+# Store the results in lists
+results.append([mse, rmse, nrmse, mae, r2])
+print(results)
+
 # Scatter plot of Actual vs Predicted values
 import matplotlib.pyplot as plt
 
@@ -37,11 +50,3 @@ plt.title('Actual vs Predicted Disease Progression')
 plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', label='Ideal Prediction (Perfect accuracy)' )
 plt.show()
 
-# Residual plot
-residuals = y_test - y_pred
-plt.scatter(y_pred, residuals)
-plt.xlabel('Predicted Disease Progression')
-plt.ylabel('Residuals')
-plt.title('Residuals Plot')
-plt.axhline(y=0, color='r', linestyle='--')
-plt.show()
