@@ -73,3 +73,4 @@ plt.yticks(range(len(columns_for_pca)), [f'PC{i+1}' for i in range(len(columns_f
 plt.title('Heatmap of PCA Loadings (Contribution of Each Feature)')
 plt.tight_layout()
 plt.show()
+
